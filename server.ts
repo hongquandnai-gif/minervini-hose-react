@@ -22,7 +22,17 @@ import {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const PORT = 3000;
+
+function getArgValue(flag: string): string | undefined {
+  const idx = process.argv.indexOf(flag);
+  if (idx !== -1 && idx + 1 < process.argv.length) {
+    return process.argv[idx + 1];
+  }
+  return undefined;
+}
+
+const PORT = Number(getArgValue('--port') || process.env.PORT || 3000);
+const HOST = getArgValue('--host') || '0.0.0.0';
 const IS_PROD = process.env.NODE_ENV === 'production';
 
 const app = express();
@@ -226,23 +236,55 @@ app.post('/api/cache/clear', (_req, res) => {
 });
 
 async function startServer() {
-  if (!IS_PROD) {
-    const { createServer: createViteServer } = await import('vite');
-    const vite = await createViteServer({
-      server: { middlewareMode: true, hmr: false },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
-  } else {
+  if (IS_PROD) {
     const distDir = path.join(__dirname, 'dist');
     app.use(express.static(distDir));
     app.use((_req, res) => {
       res.sendFile(path.join(distDir, 'index.html'));
     });
+
+    app.listen(PORT, HOST, () => {
+      console.log(`[Minervini Pro] Server listening on http://${HOST}:${PORT} (prod)`);
+    });
+    return;
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[Minervini Pro] Server listening on http://0.0.0.0:${PORT} (${IS_PROD ? 'prod' : 'dev'})`);
+  // In dev mode, open port 3000 immediately so healthchecks never time out during Vite cold init
+  let viteMiddleware: express.RequestHandler | null = null;
+  let viteInitError: Error | null = null;
+
+  const viteReady = import('vite')
+    .then(({ createServer: createViteServer }) =>
+      createViteServer({
+        server: { middlewareMode: true, hmr: false, ws: false },
+        appType: 'spa',
+      })
+    )
+    .then((vite) => {
+      viteMiddleware = vite.middlewares;
+      console.log('[Minervini Pro] Vite middleware ready');
+    })
+    .catch((err: unknown) => {
+      viteInitError = err instanceof Error ? err : new Error(String(err));
+      console.error('[Minervini Pro] Vite middleware failed to initialize:', viteInitError);
+    });
+
+  app.use((req, res, next) => {
+    if (viteMiddleware) {
+      viteMiddleware(req, res, next);
+      return;
+    }
+    viteReady.then(() => {
+      if (viteMiddleware) {
+        viteMiddleware(req, res, next);
+      } else {
+        res.status(503).send(viteInitError ? `Vite init error: ${viteInitError.message}` : 'Starting dev server...');
+      }
+    });
+  });
+
+  app.listen(PORT, HOST, () => {
+    console.log(`[Minervini Pro] Server listening on http://${HOST}:${PORT} (dev)`);
   });
 }
 

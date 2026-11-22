@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import * as echarts from 'echarts';
+import echarts, { type EChartsInstance, type EChartsOption, type SeriesOption } from '../utils/echarts';
 import type { StockBar, VcpItem } from '../types';
 import { fmtDateVn, fmtInt, fmtNum } from '../utils/format';
 
@@ -13,7 +13,7 @@ interface StockDiagnosticChartProps {
 export const StockDiagnosticChart: React.FC<StockDiagnosticChartProps> = React.memo(
   ({ ticker, bars, vcp, chartType }) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
-    const chartRef = useRef<echarts.ECharts | null>(null);
+    const chartRef = useRef<EChartsInstance | null>(null);
 
     useEffect(() => {
       if (!containerRef.current) return;
@@ -54,7 +54,7 @@ export const StockDiagnosticChart: React.FC<StockDiagnosticChartProps> = React.m
       }));
       const volMa50Data = bars.map((b) => (b.volMa50 !== null ? Math.round(b.volMa50) : null));
 
-      const priceSeries: echarts.SeriesOption =
+      const priceSeries: SeriesOption =
         chartType === 'candlestick'
           ? {
               name: `${ticker} (OHLC)`,
@@ -120,7 +120,7 @@ export const StockDiagnosticChart: React.FC<StockDiagnosticChartProps> = React.m
                 : undefined,
             };
 
-      const seriesList: echarts.SeriesOption[] = [
+      const seriesList: SeriesOption[] = [
         priceSeries,
         {
           name: 'MA20',
@@ -208,7 +208,7 @@ export const StockDiagnosticChart: React.FC<StockDiagnosticChartProps> = React.m
         }
       );
 
-      const option: echarts.EChartsOption = {
+      const option: EChartsOption = {
         animation: false,
         axisPointer: { link: [{ xAxisIndex: 'all' }] },
         tooltip: {

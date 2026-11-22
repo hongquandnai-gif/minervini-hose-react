@@ -185,26 +185,36 @@ export function App() {
     const { latestPctAboveMa200, latestPctBelowMa20, latestPctBottoming } = data.summary;
 
     let shortTerm = 'Ngắn hạn: Chưa đủ dữ liệu MA20';
+    let shortTone = 'text-slate-600';
     if (latestPctBelowMa20 !== null) {
-      if (latestPctBelowMa20 >= 80) shortTerm = `Ngắn hạn: Quá bán cực đại (${latestPctBelowMa20.toFixed(1)}% < MA20) — dễ hồi kỹ thuật`;
-      else if (latestPctBelowMa20 <= 20) shortTerm = `Ngắn hạn: Hưng phấn / quá mua (${latestPctBelowMa20.toFixed(1)}% < MA20) — tránh FOMO`;
-      else if (latestPctBelowMa20 >= 65) shortTerm = `Ngắn hạn: Áp lực điều chỉnh cao (${latestPctBelowMa20.toFixed(1)}% < MA20)`;
-      else shortTerm = `Ngắn hạn: Cân bằng (${latestPctBelowMa20.toFixed(1)}% < MA20)`;
+      if (latestPctBelowMa20 >= 80) {
+        shortTerm = `Ngắn hạn: Quá bán cực đại (${latestPctBelowMa20.toFixed(1)}% < MA20) — dễ hồi kỹ thuật`;
+        shortTone = 'text-emerald-700 font-semibold';
+      } else if (latestPctBelowMa20 <= 20) {
+        shortTerm = `Ngắn hạn: Hưng phấn / quá mua (${latestPctBelowMa20.toFixed(1)}% < MA20) — tránh FOMO`;
+        shortTone = 'text-amber-700 font-semibold';
+      } else if (latestPctBelowMa20 >= 65) {
+        shortTerm = `Ngắn hạn: Áp lực điều chỉnh cao (${latestPctBelowMa20.toFixed(1)}% < MA20)`;
+        shortTone = 'text-rose-600 font-semibold';
+      } else {
+        shortTerm = `Ngắn hạn: Cân bằng (${latestPctBelowMa20.toFixed(1)}% < MA20)`;
+        shortTone = 'text-sky-700 font-medium';
+      }
     }
 
     if (latestPctAboveMa200 === null) {
-      return { tone: 'text-amber-800', longTerm: 'Dài hạn: Chưa đủ dữ liệu MA200', shortTerm };
+      return { tone: 'text-amber-700', shortTone, longTerm: 'Dài hạn: Chưa đủ dữ liệu MA200', shortTerm };
     }
     if (latestPctAboveMa200 >= 50) {
-      return { tone: 'text-emerald-800', longTerm: `Dài hạn: Uptrend (${latestPctAboveMa200.toFixed(1)}% > MA200)`, shortTerm };
+      return { tone: 'text-emerald-700', shortTone, longTerm: `Dài hạn: Uptrend (${latestPctAboveMa200.toFixed(1)}% > MA200)`, shortTerm };
     }
     if (latestPctAboveMa200 <= 20 && latestPctBottoming !== null && latestPctBottoming >= 40) {
-      return { tone: 'text-red-800', longTerm: `Dài hạn: Dò đáy nguy hiểm (${latestPctBottoming.toFixed(1)}% sát đáy 52T)`, shortTerm };
+      return { tone: 'text-rose-700', shortTone, longTerm: `Dài hạn: Dò đáy nguy hiểm (${latestPctBottoming.toFixed(1)}% sát đáy 52T)`, shortTerm };
     }
     if (latestPctAboveMa200 <= 20) {
-      return { tone: 'text-red-800', longTerm: `Dài hạn: Quá bán (${latestPctAboveMa200.toFixed(1)}% > MA200)`, shortTerm };
+      return { tone: 'text-rose-700', shortTone, longTerm: `Dài hạn: Quá bán (${latestPctAboveMa200.toFixed(1)}% > MA200)`, shortTerm };
     }
-    return { tone: 'text-amber-800', longTerm: `Dài hạn: Đi ngang / phân hóa (${latestPctAboveMa200.toFixed(1)}% > MA200)`, shortTerm };
+    return { tone: 'text-amber-700', shortTone, longTerm: `Dài hạn: Đi ngang / phân hóa (${latestPctAboveMa200.toFixed(1)}% > MA200)`, shortTerm };
   }, [data]);
 
   return (
@@ -217,7 +227,7 @@ export function App() {
             e.preventDefault();
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className="text-base font-extrabold tracking-tight text-slate-900 whitespace-nowrap shrink-0"
+          className="text-base font-extrabold tracking-tight whitespace-nowrap shrink-0 bg-gradient-to-r from-sky-700 via-blue-600 to-indigo-600 bg-clip-text text-transparent"
         >
           Minervini Pro
         </a>
@@ -228,8 +238,8 @@ export function App() {
             onClick={() => setActiveTab('minervini')}
             className={`whitespace-nowrap shrink-0 pb-0.5 border-b-2 transition-colors ${
               activeTab === 'minervini'
-                ? 'text-sky-700 border-sky-600 font-semibold'
-                : 'border-transparent hover:text-slate-900'
+                ? 'text-sky-700 border-sky-600 font-bold'
+                : 'border-transparent hover:text-sky-700'
             }`}
           >
             Quét Minervini
@@ -239,19 +249,24 @@ export function App() {
             onClick={() => setActiveTab('vcp')}
             className={`whitespace-nowrap shrink-0 pb-0.5 border-b-2 transition-colors ${
               activeTab === 'vcp'
-                ? 'text-sky-700 border-sky-600 font-semibold'
-                : 'border-transparent hover:text-slate-900'
+                ? 'text-violet-700 border-violet-600 font-bold'
+                : 'border-transparent hover:text-violet-700'
             }`}
           >
-            Mẫu hình VCP {data ? `(${data.vcpList.length})` : ''}
+            Mẫu hình VCP{' '}
+            {data ? (
+              <span className="font-mono font-bold text-violet-600">({data.vcpList.length})</span>
+            ) : (
+              ''
+            )}
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('diagnostic')}
             className={`whitespace-nowrap shrink-0 pb-0.5 border-b-2 transition-colors ${
               activeTab === 'diagnostic'
-                ? 'text-sky-700 border-sky-600 font-semibold'
-                : 'border-transparent hover:text-slate-900'
+                ? 'text-emerald-700 border-emerald-600 font-bold'
+                : 'border-transparent hover:text-emerald-700'
             }`}
           >
             Chẩn đoán cổ phiếu
@@ -304,11 +319,18 @@ export function App() {
           <div className="space-y-2">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">
-                Phân tích Chu kỳ Minervini &amp; Độ rộng Thị trường
+                Phân tích Chu kỳ <span className="text-sky-700">Minervini</span> &amp;{' '}
+                <span className="text-indigo-700">Độ rộng Thị trường</span>
               </h1>
               {data && (
-                <div className="text-xs font-mono text-slate-500">
-                  {data.basketLabel} · {data.summary.totalLoaded} mã · {data.computeMs}ms{data.cacheHit ? ' (cache)' : ''}
+                <div className="text-xs font-mono text-slate-500 flex items-center gap-1.5">
+                  <span className="font-bold text-sky-700">{data.basketLabel}</span>
+                  <span className="text-slate-300">·</span>
+                  <span className="font-semibold text-emerald-700">{data.summary.totalLoaded} mã</span>
+                  <span className="text-slate-300">·</span>
+                  <span className="font-semibold text-amber-600">
+                    {data.computeMs}ms{data.cacheHit ? ' (cache)' : ''}
+                  </span>
                 </div>
               )}
             </div>
@@ -324,9 +346,9 @@ export function App() {
                     <span aria-hidden="true" className="text-slate-300">/</span>
                   </>
                 )}
-                <span className={`font-semibold ${healthSummary.tone}`}>{healthSummary.longTerm}</span>
+                <span className={`font-bold ${healthSummary.tone}`}>{healthSummary.longTerm}</span>
                 <span aria-hidden="true" className="text-slate-300">·</span>
-                <span className="text-slate-600">{healthSummary.shortTerm}</span>
+                <span className={healthSummary.shortTone}>{healthSummary.shortTerm}</span>
               </div>
             )}
           </div>
@@ -374,10 +396,10 @@ export function App() {
                   <button
                     type="button"
                     onClick={() => setActiveTab('minervini')}
-                    className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
+                    className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
                       activeTab === 'minervini'
                         ? 'bg-white text-sky-700 shadow-sm'
-                        : 'text-slate-600 hover:text-slate-900'
+                        : 'text-slate-600 hover:text-sky-700'
                     }`}
                   >
                     Quét Siêu Cổ Phiếu (Minervini)
@@ -385,21 +407,22 @@ export function App() {
                   <button
                     type="button"
                     onClick={() => setActiveTab('vcp')}
-                    className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
+                    className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
                       activeTab === 'vcp'
-                        ? 'bg-white text-sky-700 shadow-sm'
-                        : 'text-slate-600 hover:text-slate-900'
+                        ? 'bg-white text-violet-700 shadow-sm'
+                        : 'text-slate-600 hover:text-violet-700'
                     }`}
                   >
-                    Mẫu Hình Cốc / VCP ({data.vcpList.length})
+                    Mẫu Hình Cốc / VCP{' '}
+                    <span className="font-mono text-violet-600">({data.vcpList.length})</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setActiveTab('diagnostic')}
-                    className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
+                    className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
                       activeTab === 'diagnostic'
-                        ? 'bg-white text-sky-700 shadow-sm'
-                        : 'text-slate-600 hover:text-slate-900'
+                        ? 'bg-white text-emerald-700 shadow-sm'
+                        : 'text-slate-600 hover:text-emerald-700'
                     }`}
                   >
                     Chẩn Đoán Cổ Phiếu Đơn &amp; Đồ Thị

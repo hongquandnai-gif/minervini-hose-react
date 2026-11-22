@@ -152,17 +152,17 @@ export const DiagnosticTab: React.FC<DiagnosticTabProps> = React.memo(
         <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="text-base font-bold text-slate-900">
-              <span className="font-mono">{tk.ticker}</span>
-              {tk.companyName ? <span className="font-semibold text-slate-600"> — {tk.companyName}</span> : null}
+              <span className="font-mono text-lg font-extrabold text-sky-700">{tk.ticker}</span>
+              {tk.companyName ? <span className="font-semibold text-slate-700"> — {tk.companyName}</span> : null}
             </h3>
-            <span className="text-xs font-mono text-slate-500">Phiên {fmtDateVn(tk.date)}</span>
+            <span className="text-xs font-mono font-semibold text-indigo-600">Phiên {fmtDateVn(tk.date)}</span>
           </div>
 
           <div className="pt-2 border-t border-slate-100">
-            <div className="text-sm font-bold" style={{ color: tk.phaseColor }}>
+            <div className="text-sm font-extrabold" style={{ color: tk.phaseColor }}>
               {tk.phaseTitle}
             </div>
-            <p className="text-xs text-slate-600 mt-1 leading-relaxed">{tk.phaseDesc}</p>
+            <p className="text-xs text-slate-700 mt-1 leading-relaxed">{tk.phaseDesc}</p>
           </div>
 
           {vcp && (
@@ -170,14 +170,20 @@ export const DiagnosticTab: React.FC<DiagnosticTabProps> = React.memo(
               <span className="font-bold text-violet-700">Mô hình VCP hợp lệ ({vcp.baseDays} ngày)</span>
               <span aria-hidden="true" className="text-slate-300">·</span>
               <span>
-                Thu hẹp: <strong className="font-mono">{vcp.numContractions}T ({vcp.ranges.map((r) => `${r}%`).join(' → ')})</strong>
+                Thu hẹp:{' '}
+                <strong className="font-mono text-indigo-700">
+                  {vcp.numContractions}T ({vcp.ranges.map((r) => `${r}%`).join(' → ')})
+                </strong>
               </span>
               <span aria-hidden="true" className="text-slate-300">·</span>
               <span>
-                Pivot: <strong className="font-mono text-violet-700">{fmtNum(vcp.buyPoint, 2)}</strong> ({fmtPct(vcp.pctFromPivot, 1, true)})
+                Pivot: <strong className="font-mono text-violet-700">{fmtNum(vcp.buyPoint, 2)}</strong>{' '}
+                <span className={vcp.pctFromPivot >= 0 ? 'font-mono font-bold text-emerald-600' : 'font-mono font-semibold text-sky-700'}>
+                  ({fmtPct(vcp.pctFromPivot, 1, true)})
+                </span>
               </span>
               <span aria-hidden="true" className="text-slate-300">·</span>
-              <span className="font-semibold text-slate-900">{vcp.status}</span>
+              <span className="font-bold text-emerald-700">{vcp.status}</span>
             </div>
           )}
         </div>
@@ -185,47 +191,59 @@ export const DiagnosticTab: React.FC<DiagnosticTabProps> = React.memo(
         {/* 3 Diagnostic Detail Panels */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-2 text-xs">
-            <div className="font-bold text-slate-900 pb-1.5 border-b border-slate-100">Cấu trúc xu hướng &amp; MA</div>
+            <div className="font-bold text-sky-700 pb-1.5 border-b border-slate-100">Cấu trúc xu hướng &amp; MA</div>
             <div className="flex items-center justify-between gap-2">
               <span className="text-slate-600">
-                Giá (<span className="font-mono font-semibold text-slate-900">{fmtNum(tk.close, 2)}</span>) vs MA20 ({fmtNum(tk.ma20, 2)})
+                Giá (<span className="font-mono font-bold text-slate-900">{fmtNum(tk.close, 2)}</span>) vs{' '}
+                <span className="font-semibold text-cyan-700">MA20</span>{' '}
+                <span className="font-mono text-cyan-700">({fmtNum(tk.ma20, 2)})</span>
               </span>
               <StatusIcon ok={ma20Ok} />
             </div>
             <div className="flex items-center justify-between gap-2">
-              <span className="text-slate-600">Giá vs MA50 ({fmtNum(tk.ma50, 2)})</span>
+              <span className="text-slate-600">
+                Giá vs <span className="font-semibold text-blue-700">MA50</span>{' '}
+                <span className="font-mono text-blue-700">({fmtNum(tk.ma50, 2)})</span>
+              </span>
               <StatusIcon ok={ma50Ok} />
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="text-slate-600">
-                MA150 / MA200 ({fmtNum(tk.ma150, 2)} / {fmtNum(tk.ma200, 2)})
+                <span className="font-semibold text-orange-600">MA150</span> /{' '}
+                <span className="font-semibold text-rose-600">MA200</span> (
+                <span className="font-mono text-orange-600">{fmtNum(tk.ma150, 2)}</span> /{' '}
+                <span className="font-mono text-rose-600">{fmtNum(tk.ma200, 2)}</span>)
               </span>
               <StatusIcon ok={maLongOk} />
             </div>
           </div>
 
           <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-2 text-xs">
-            <div className="font-bold text-slate-900 pb-1.5 border-b border-slate-100">Vị thế đỉnh / đáy 52 tuần</div>
+            <div className="font-bold text-amber-700 pb-1.5 border-b border-slate-100">Vị thế đỉnh / đáy 52 tuần</div>
             <div className="flex items-center justify-between gap-2">
               <span className="text-slate-600">Đỉnh 52 tuần</span>
-              <span className="font-mono text-slate-900">
-                <strong>{fmtNum(tk.peak52w, 2)}</strong> ({fmtPct(tk.pctFromPeak, 1, true)})
+              <span className="font-mono">
+                <strong className="text-sky-700">{fmtNum(tk.peak52w, 2)}</strong>{' '}
+                <span className={tk.pctFromPeak !== null && tk.pctFromPeak >= -5 ? 'text-emerald-600 font-semibold' : 'text-rose-600 font-semibold'}>
+                  ({fmtPct(tk.pctFromPeak, 1, true)})
+                </span>
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="text-slate-600">Đáy 52 tuần</span>
-              <span className="font-mono text-slate-900">
-                <strong>{fmtNum(tk.bottom52w, 2)}</strong> ({fmtPct(tk.pctFromBottom, 1, true)})
+              <span className="font-mono">
+                <strong className="text-indigo-700">{fmtNum(tk.bottom52w, 2)}</strong>{' '}
+                <span className="text-emerald-600 font-semibold">({fmtPct(tk.pctFromBottom, 1, true)})</span>
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="text-slate-600">Độ dốc MA200 (20P)</span>
               {ma200Up ? (
-                <span className="inline-flex items-center gap-0.5 text-emerald-700 font-semibold">
+                <span className="inline-flex items-center gap-0.5 text-emerald-600 font-bold">
                   <Check className="w-3.5 h-3.5" /> Dốc lên
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-0.5 text-red-600 font-semibold">
+                <span className="inline-flex items-center gap-0.5 text-rose-600 font-bold">
                   <X className="w-3.5 h-3.5" /> Đi ngang / Dốc xuống
                 </span>
               )}
@@ -233,21 +251,33 @@ export const DiagnosticTab: React.FC<DiagnosticTabProps> = React.memo(
           </div>
 
           <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-2 text-xs">
-            <div className="font-bold text-slate-900 pb-1.5 border-b border-slate-100">Sức mạnh &amp; Thanh khoản</div>
+            <div className="font-bold text-violet-700 pb-1.5 border-b border-slate-100">Sức mạnh &amp; Thanh khoản</div>
             <div className="flex items-center justify-between gap-2">
               <span className="text-slate-600">Điểm RS Rating</span>
               <span className="font-mono">
-                <strong className="text-lg font-bold text-violet-700">{tk.rsRating ?? 'N/A'}</strong>
+                <strong
+                  className={`text-lg font-extrabold ${
+                    tk.rsRating === null
+                      ? 'text-slate-400'
+                      : tk.rsRating >= 80
+                        ? 'text-violet-700'
+                        : tk.rsRating >= 60
+                          ? 'text-emerald-600'
+                          : 'text-amber-600'
+                  }`}
+                >
+                  {tk.rsRating ?? 'N/A'}
+                </strong>
                 <span className="text-slate-400"> / 99</span>
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="text-slate-600">KLGD phiên gần nhất</span>
-              <span className="font-mono font-semibold text-slate-900">{fmtInt(tk.volume)} CP</span>
+              <span className="font-mono font-bold text-indigo-700">{fmtInt(tk.volume)} CP</span>
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="text-slate-600">KLGD TB 20 phiên</span>
-              <span className="font-mono font-semibold text-slate-900">{fmtInt(tk.volMa20)} CP</span>
+              <span className="font-mono font-bold text-teal-700">{fmtInt(tk.volMa20)} CP</span>
             </div>
           </div>
         </div>

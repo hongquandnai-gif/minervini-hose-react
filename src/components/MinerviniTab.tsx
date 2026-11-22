@@ -89,14 +89,21 @@ export const MinerviniTab: React.FC<MinerviniTabProps> = React.memo(
       <div className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h3 className="text-base font-bold text-slate-900">
-              Bảng xếp hạng cổ phiếu dẫn dắt (Ngày {fmtDateVn(evalDate)})
+            <h3 className="text-base font-bold text-sky-800">
+              Bảng xếp hạng cổ phiếu dẫn dắt{' '}
+              <span className="text-indigo-600 font-mono text-sm">(Ngày {fmtDateVn(evalDate)})</span>
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Phát hiện <strong className="text-slate-900 font-mono">{filtered.length} / {stocks.length}</strong> cổ phiếu thỏa mãn Trend Template (RS ≥ {rsThreshold}, KLGD TB 20P ≥ {fmtInt(minVolFilter)} CP). Click vào dòng để soi đồ thị.
+            <p className="text-xs text-slate-600 mt-0.5">
+              Phát hiện{' '}
+              <strong className="text-emerald-700 font-mono font-bold">
+                {filtered.length} / {stocks.length}
+              </strong>{' '}
+              cổ phiếu thỏa mãn Trend Template (RS ≥{' '}
+              <span className="font-mono font-semibold text-violet-700">{rsThreshold}</span>, KLGD TB 20P ≥{' '}
+              <span className="font-mono font-semibold text-indigo-700">{fmtInt(minVolFilter)}</span> CP). Click vào dòng để soi đồ thị.
             </p>
             {stocks.length < 10 && (
-              <p className="text-xs text-amber-700 mt-0.5">
+              <p className="text-xs text-amber-700 font-medium mt-0.5">
                 Lưu ý: Điểm RS Rating được xếp hạng tương đối trong phạm vi rổ cổ phiếu đang chọn.
               </p>
             )}
@@ -104,8 +111,8 @@ export const MinerviniTab: React.FC<MinerviniTabProps> = React.memo(
 
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2.5">
-              <label htmlFor="rs-slider" className="text-xs font-medium text-slate-600 whitespace-nowrap">
-                RS tối thiểu: <span className="font-mono font-bold text-slate-900">{rsThreshold}</span>
+              <label htmlFor="rs-slider" className="text-xs font-semibold text-slate-700 whitespace-nowrap">
+                RS tối thiểu: <span className="font-mono font-extrabold text-violet-700">{rsThreshold}</span>
               </label>
               <input
                 id="rs-slider"
@@ -172,51 +179,61 @@ export const MinerviniTab: React.FC<MinerviniTabProps> = React.memo(
                       KLGD TB 20P <ArrowUpDown className="w-3 h-3" />
                     </button>
                   </th>
-                  <th className="py-2.5 px-3 text-right font-semibold whitespace-nowrap">MA20</th>
-                  <th className="py-2.5 px-3 text-right font-semibold whitespace-nowrap">MA50</th>
-                  <th className="py-2.5 px-3 text-right font-semibold whitespace-nowrap">MA150</th>
-                  <th className="py-2.5 px-3 text-right font-semibold whitespace-nowrap">MA200</th>
+                  <th className="py-2.5 px-3 text-right font-bold text-cyan-700 whitespace-nowrap">MA20</th>
+                  <th className="py-2.5 px-3 text-right font-bold text-blue-700 whitespace-nowrap">MA50</th>
+                  <th className="py-2.5 px-3 text-right font-bold text-orange-600 whitespace-nowrap">MA150</th>
+                  <th className="py-2.5 px-3 text-right font-bold text-rose-600 whitespace-nowrap">MA200</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {filtered.map((s) => (
-                  <tr
-                    key={s.ticker}
-                    onClick={() => onSelectTicker(s.ticker)}
-                    className="hover:bg-sky-50/50 cursor-pointer transition-colors"
-                  >
-                    <td className="py-2.5 px-3 font-mono font-bold text-slate-900 whitespace-nowrap">
-                      <span>{s.ticker}</span>
-                      {vcpTickers.has(s.ticker) && (
-                        <span className="ml-1.5 text-[10px] font-sans font-semibold text-violet-700">VCP</span>
-                      )}
-                    </td>
-                    <td className="py-2.5 px-3 text-slate-600 max-w-[260px] truncate" title={s.companyName}>
-                      {s.companyName || '—'}
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-mono font-semibold text-slate-900">
-                      {fmtNum(s.close, 2)}
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-mono">
-                      <span className={`inline-block px-2 py-0.5 rounded ${rsColorClass(s.rsRating)}`}>
-                        {s.rsRating ?? '—'}
-                      </span>
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-700">
-                      {fmtPct(s.pctFromPeak, 1, true)}
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-mono text-emerald-700 font-medium">
-                      {fmtPct(s.pctFromBottom, 1, true)}
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-700">
-                      {fmtInt(s.volMa20)}
-                    </td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-600">{fmtNum(s.ma20, 2)}</td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-600">{fmtNum(s.ma50, 2)}</td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-600">{fmtNum(s.ma150, 2)}</td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-600">{fmtNum(s.ma200, 2)}</td>
-                  </tr>
-                ))}
+                {filtered.map((s) => {
+                  const peakTone =
+                    s.pctFromPeak === null
+                      ? 'text-slate-400'
+                      : s.pctFromPeak >= -5
+                        ? 'text-emerald-600 font-semibold'
+                        : s.pctFromPeak >= -15
+                          ? 'text-amber-600 font-medium'
+                          : 'text-rose-600 font-medium';
+                  return (
+                    <tr
+                      key={s.ticker}
+                      onClick={() => onSelectTicker(s.ticker)}
+                      className="hover:bg-sky-50/60 cursor-pointer transition-colors"
+                    >
+                      <td className="py-2.5 px-3 font-mono font-extrabold text-sky-700 whitespace-nowrap">
+                        <span>{s.ticker}</span>
+                        {vcpTickers.has(s.ticker) && (
+                          <span className="ml-1.5 text-[10px] font-sans font-extrabold text-violet-600">VCP</span>
+                        )}
+                      </td>
+                      <td className="py-2.5 px-3 text-slate-700 max-w-[260px] truncate" title={s.companyName}>
+                        {s.companyName || '—'}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">
+                        {fmtNum(s.close, 2)}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono">
+                        <span className={`inline-block px-2 py-0.5 rounded ${rsColorClass(s.rsRating)}`}>
+                          {s.rsRating ?? '—'}
+                        </span>
+                      </td>
+                      <td className={`py-2.5 px-3 text-right font-mono ${peakTone}`}>
+                        {fmtPct(s.pctFromPeak, 1, true)}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono text-emerald-600 font-semibold">
+                        {fmtPct(s.pctFromBottom, 1, true)}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono text-indigo-700 font-medium">
+                        {fmtInt(s.volMa20)}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-mono text-cyan-700">{fmtNum(s.ma20, 2)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-blue-700">{fmtNum(s.ma50, 2)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-orange-600">{fmtNum(s.ma150, 2)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-rose-600">{fmtNum(s.ma200, 2)}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

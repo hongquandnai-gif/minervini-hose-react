@@ -26,11 +26,12 @@ export const VcpTab: React.FC<VcpTabProps> = React.memo(({ vcpList, minVolFilter
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-base font-bold text-slate-900">
-          Tín hiệu điểm mua mô hình thu hẹp biến động (VCP)
+        <h3 className="text-base font-bold text-violet-800">
+          Tín hiệu điểm mua mô hình thu hẹp biến động <span className="text-sky-700">(VCP)</span>
         </h3>
-        <p className="text-xs text-slate-500 mt-0.5">
-          Quét các cổ phiếu thỏa mãn Trend Template (RS ≥ 60, KLGD TB 20P ≥ {fmtInt(minVolFilter)} CP) hình thành cấu trúc VCP (Lookback 150 ngày, nền giá ≥ 15 ngày, chưa gãy đáy thu hẹp cuối). Click vào dòng để xem sóng VCP trên đồ thị.
+        <p className="text-xs text-slate-600 mt-0.5">
+          Quét các cổ phiếu thỏa mãn Trend Template (RS ≥ <span className="font-mono font-semibold text-violet-700">60</span>, KLGD TB 20P ≥{' '}
+          <span className="font-mono font-semibold text-indigo-700">{fmtInt(minVolFilter)}</span> CP) hình thành cấu trúc VCP (Lookback 150 ngày, nền giá ≥ 15 ngày, chưa gãy đáy thu hẹp cuối). Click vào dòng để xem sóng VCP trên đồ thị.
         </p>
       </div>
 
@@ -57,53 +58,69 @@ export const VcpTab: React.FC<VcpTabProps> = React.memo(({ vcpList, minVolFilter
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {vcpList.map((item) => (
-                <tr
-                  key={item.ticker}
-                  onClick={() => onSelectTicker(item.ticker)}
-                  className="hover:bg-sky-50/50 cursor-pointer transition-colors"
-                >
-                  <td className="py-2.5 px-3 font-mono text-[11px] whitespace-nowrap">
-                    <span className={item.isLive ? 'text-emerald-700 font-semibold' : 'text-slate-400'}>
-                      {item.isLive ? 'LIVE' : 'EOD'}
-                    </span>
-                  </td>
-                  <td className="py-2.5 px-3 font-mono font-bold text-slate-900 whitespace-nowrap">
-                    {item.ticker}
-                  </td>
-                  <td className="py-2.5 px-3 text-slate-600 max-w-[230px] truncate" title={item.companyName}>
-                    {item.companyName || '—'}
-                  </td>
-                  <td className="py-2.5 px-3 text-right font-mono">
-                    <span className={`inline-block px-2 py-0.5 rounded ${rsStyle(item.rsRating)}`}>
-                      {item.rsRating}
-                    </span>
-                  </td>
-                  <td className="py-2.5 px-3 text-right font-mono font-semibold text-slate-900">
-                    {fmtNum(item.close, 2)}
-                  </td>
-                  <td className="py-2.5 px-3 text-right font-mono font-semibold text-violet-700">
-                    {fmtNum(item.buyPoint, 2)}
-                  </td>
-                  <td className="py-2.5 px-3 text-right font-mono font-medium text-slate-800">
-                    {fmtPct(item.pctFromPivot, 1, true)}
-                  </td>
-                  <td className="py-2.5 px-3 font-mono text-slate-700 whitespace-nowrap">
-                    {item.numContractions}T ({item.ranges.map((r) => `${r}%`).join(' → ')})
-                  </td>
-                  <td className="py-2.5 px-3 text-right font-mono text-slate-700 whitespace-nowrap">
-                    {item.baseDays} ngày
-                  </td>
-                  <td className="py-2.5 px-3 text-right font-mono text-slate-700 whitespace-nowrap">
-                    {item.volRatio !== null ? `${Math.round(item.volRatio)}%` : '—'}
-                  </td>
-                  <td className="py-2.5 px-3 whitespace-nowrap">
-                    <span className={`inline-block px-2 py-0.5 rounded text-[11px] ${statusStyle(item.priority)}`}>
-                      {item.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
+              {vcpList.map((item) => {
+                const pivotTone =
+                  item.pctFromPivot >= 0
+                    ? 'text-emerald-600 font-bold'
+                    : item.pctFromPivot >= -3
+                      ? 'text-sky-700 font-bold'
+                      : 'text-amber-600 font-semibold';
+                const volTone =
+                  item.volRatio === null
+                    ? 'text-slate-400'
+                    : item.volRatio >= 130
+                      ? 'text-emerald-600 font-bold'
+                      : item.volRatio <= 65
+                        ? 'text-amber-600 font-semibold'
+                        : 'text-indigo-700 font-medium';
+                return (
+                  <tr
+                    key={item.ticker}
+                    onClick={() => onSelectTicker(item.ticker)}
+                    className="hover:bg-violet-50/40 cursor-pointer transition-colors"
+                  >
+                    <td className="py-2.5 px-3 font-mono text-[11px] whitespace-nowrap">
+                      <span className={item.isLive ? 'text-emerald-600 font-bold' : 'text-sky-600 font-semibold'}>
+                        {item.isLive ? 'LIVE' : 'EOD'}
+                      </span>
+                    </td>
+                    <td className="py-2.5 px-3 font-mono font-extrabold text-sky-700 whitespace-nowrap">
+                      {item.ticker}
+                    </td>
+                    <td className="py-2.5 px-3 text-slate-700 max-w-[230px] truncate" title={item.companyName}>
+                      {item.companyName || '—'}
+                    </td>
+                    <td className="py-2.5 px-3 text-right font-mono">
+                      <span className={`inline-block px-2 py-0.5 rounded ${rsStyle(item.rsRating)}`}>
+                        {item.rsRating}
+                      </span>
+                    </td>
+                    <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">
+                      {fmtNum(item.close, 2)}
+                    </td>
+                    <td className="py-2.5 px-3 text-right font-mono font-bold text-violet-700">
+                      {fmtNum(item.buyPoint, 2)}
+                    </td>
+                    <td className={`py-2.5 px-3 text-right font-mono ${pivotTone}`}>
+                      {fmtPct(item.pctFromPivot, 1, true)}
+                    </td>
+                    <td className="py-2.5 px-3 font-mono font-semibold text-indigo-700 whitespace-nowrap">
+                      {item.numContractions}T ({item.ranges.map((r) => `${r}%`).join(' → ')})
+                    </td>
+                    <td className="py-2.5 px-3 text-right font-mono font-medium text-teal-700 whitespace-nowrap">
+                      {item.baseDays} ngày
+                    </td>
+                    <td className={`py-2.5 px-3 text-right font-mono whitespace-nowrap ${volTone}`}>
+                      {item.volRatio !== null ? `${Math.round(item.volRatio)}%` : '—'}
+                    </td>
+                    <td className="py-2.5 px-3 whitespace-nowrap">
+                      <span className={`inline-block px-2 py-0.5 rounded text-[11px] ${statusStyle(item.priority)}`}>
+                        {item.status}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import * as echarts from 'echarts';
+import echarts, { type EChartsInstance, type EChartsOption, type SeriesOption } from '../utils/echarts';
 import type { DailyBreadthPoint, MarketSummary } from '../types';
 import { fmtDateVn, fmtNum } from '../utils/format';
 
@@ -13,7 +13,7 @@ interface MarketBreadthChartProps {
 export const MarketBreadthChart: React.FC<MarketBreadthChartProps> = React.memo(
   ({ series, summary, showMa20Line, startDate }) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
-    const chartRef = useRef<echarts.ECharts | null>(null);
+    const chartRef = useRef<EChartsInstance | null>(null);
 
     useEffect(() => {
       if (!containerRef.current) return;
@@ -49,7 +49,7 @@ export const MarketBreadthChart: React.FC<MarketBreadthChartProps> = React.memo(
 
       const peakIdx = series.findIndex((p) => p.date === summary.peakDate);
 
-      const chartSeries: echarts.SeriesOption[] = [
+      const chartSeries: SeriesOption[] = [
         {
           name: summary.indexLabel,
           type: 'line',
@@ -150,7 +150,7 @@ export const MarketBreadthChart: React.FC<MarketBreadthChartProps> = React.memo(
         itemStyle: { color: '#8b5cf6' },
       });
 
-      const option: echarts.EChartsOption = {
+      const option: EChartsOption = {
         animation: false,
         tooltip: {
           trigger: 'axis',
@@ -260,9 +260,13 @@ export const MarketBreadthChart: React.FC<MarketBreadthChartProps> = React.memo(
       <section className="bg-white border border-slate-200 rounded-xl p-4 sm:p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2 pb-3 mb-2 border-b border-slate-100">
           <h2 className="text-sm sm:text-base font-bold text-slate-900">
-            Biểu đồ tương quan {summary.indexLabel} &amp; độ rộng nội tại ({summary.totalLoaded}/{summary.totalRequested} mã)
+            Biểu đồ tương quan <span className="text-sky-700">{summary.indexLabel}</span> &amp;{' '}
+            <span className="text-amber-600">độ rộng nội tại</span>{' '}
+            <span className="text-emerald-700 font-mono text-xs sm:text-sm">
+              ({summary.totalLoaded}/{summary.totalRequested} mã)
+            </span>
           </h2>
-          <span className="text-xs font-mono text-slate-500">
+          <span className="text-xs font-mono font-semibold text-indigo-600">
             {fmtDateVn(startDate)} — {fmtDateVn(summary.actualEvalDate)}
           </span>
         </div>

@@ -9,6 +9,7 @@ export default defineConfig({
     port: 3000,
     allowedHosts: true,
     hmr: false,
+    ws: false,
   },
   build: {
     outDir: 'dist',

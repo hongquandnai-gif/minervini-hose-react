@@ -44,7 +44,7 @@ export const Sidebar: React.FC<SidebarProps> = React.memo((props) => {
       <div className="p-5 space-y-6">
         {/* Basket Selection */}
         <section className="space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
+          <div className="flex items-center gap-2 text-xs font-bold text-sky-700">
             <Layers className="w-3.5 h-3.5 text-sky-600" />
             <span>Danh mục cổ phiếu SSI</span>
           </div>
@@ -96,11 +96,11 @@ export const Sidebar: React.FC<SidebarProps> = React.memo((props) => {
           </div>
 
           {props.sourceInfo && (
-            <div className="text-xs text-slate-600 bg-slate-50 border border-slate-200/80 rounded-lg p-2.5 leading-relaxed">
-              <div className="font-semibold text-slate-900 tabular-nums">
+            <div className="text-xs text-slate-600 bg-sky-50/50 border border-sky-200/70 rounded-lg p-2.5 leading-relaxed">
+              <div className="font-bold text-emerald-700 tabular-nums">
                 {props.loadedCount} / {props.requestedCount} cổ phiếu hợp lệ
               </div>
-              <div className="text-slate-500 mt-0.5 truncate" title={props.sourceInfo}>
+              <div className="text-sky-700/90 mt-0.5 truncate" title={props.sourceInfo}>
                 Nguồn: {props.sourceInfo}
               </div>
             </div>
@@ -112,8 +112,8 @@ export const Sidebar: React.FC<SidebarProps> = React.memo((props) => {
         {/* Date Range */}
         <section className="space-y-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-              <Calendar className="w-3.5 h-3.5 text-sky-600" />
+            <div className="flex items-center gap-2 text-xs font-bold text-indigo-700">
+              <Calendar className="w-3.5 h-3.5 text-indigo-600" />
               <span>Dải ngày phân tích</span>
             </div>
             <div className="flex items-center gap-1">
@@ -126,7 +126,7 @@ export const Sidebar: React.FC<SidebarProps> = React.memo((props) => {
                   key={p.label}
                   type="button"
                   onClick={() => setPresetDays(p.days)}
-                  className="px-1.5 py-0.5 text-[11px] font-semibold text-slate-600 hover:text-sky-700 hover:bg-sky-50 rounded transition-colors"
+                  className="px-1.5 py-0.5 text-[11px] font-bold text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded transition-colors"
                 >
                   {p.label}
                 </button>
@@ -164,12 +164,13 @@ export const Sidebar: React.FC<SidebarProps> = React.memo((props) => {
           </div>
 
           {dateInvalid ? (
-            <p className="text-xs text-red-600 font-medium">
+            <p className="text-xs text-rose-600 font-semibold">
               Yêu cầu tối thiểu 400 ngày lịch ({days} ngày hiện tại).
             </p>
           ) : (
             <p className="text-xs text-slate-500 tabular-nums">
-              Biên độ hiển thị: <span className="font-semibold text-slate-700">{days} ngày</span> (+400 ngày đệm MA200 &amp; 52T)
+              Biên độ hiển thị: <span className="font-bold text-indigo-700">{days} ngày</span>{' '}
+              <span className="text-amber-700 font-medium">(+400 ngày đệm MA200 &amp; 52T)</span>
             </p>
           )}
         </section>
@@ -178,8 +179,8 @@ export const Sidebar: React.FC<SidebarProps> = React.memo((props) => {
 
         {/* Chart & Liquidity Settings */}
         <section className="space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-sky-600" />
+          <div className="flex items-center gap-2 text-xs font-bold text-amber-700">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-amber-600" />
             <span>Biểu đồ &amp; Thanh khoản</span>
           </div>
 
@@ -188,9 +189,11 @@ export const Sidebar: React.FC<SidebarProps> = React.memo((props) => {
               type="checkbox"
               checked={props.showMa20Line}
               onChange={(e) => props.onToggleMa20Line(e.target.checked)}
-              className="w-4 h-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
+              className="w-4 h-4 rounded border-slate-300 text-pink-600 focus:ring-pink-500"
             />
-            <span>Hiển thị đường % Dưới MA20 (Ngắn hạn)</span>
+            <span>
+              Hiển thị đường <span className="font-semibold text-pink-600">% Dưới MA20</span> (Ngắn hạn)
+            </span>
           </label>
 
           <div className="space-y-1.5">
@@ -215,8 +218,8 @@ export const Sidebar: React.FC<SidebarProps> = React.memo((props) => {
         {/* Realtime Live Engine */}
         <section className="space-y-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-800">
-              <Radio className={`w-3.5 h-3.5 ${props.realtimeOn ? 'text-emerald-600' : 'text-slate-400'}`} />
+            <div className={`flex items-center gap-2 text-xs font-bold ${props.realtimeOn ? 'text-emerald-700' : 'text-teal-700'}`}>
+              <Radio className={`w-3.5 h-3.5 ${props.realtimeOn ? 'text-emerald-600' : 'text-teal-500'}`} />
               <span>Realtime Trong Phiên</span>
             </div>
             <button
